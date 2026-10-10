@@ -1,0 +1,24 @@
+.DS_Store
+node_modules/
+
+# env — commit .env.example only
+.env
+.env.*
+!.env.example
+
+# React Router / Vite
+/.react-router/
+/build/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Claude Code — personal overrides
+.claude/settings.local.json
+
+/docs/
+CLAUDE.md
+.claude
