@@ -1,6 +1,6 @@
 import type { Task } from "~/features/board/types";
-import { TaskCard } from "~/features/board/TaskCard";
 import type { Route } from "./+types/home";
+import { Board } from "~/features/board/Board";
 
 export function meta() {
   return [{ title: "Agile Sim" }];
@@ -11,13 +11,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
   return (
     <main className="mx-auto max-w-md p-6">
-      <ul className="flex flex-col gap-3">
-        {tasks.map((task) => (
-          <li key={task.id}>
-            <TaskCard task={task} />
-          </li>
-        ))}
-      </ul>
+      <Board tasks={tasks} />
     </main>
   );
 }
@@ -43,6 +37,13 @@ export async function loader() {
       title: "Test",
       description: "Test.",
       status: "done",
+      priority: "high",
+    },
+    {
+      id: "4",
+      title: "Test",
+      description: "Test.",
+      status: "wont-do",
       priority: "high",
     },
   ];
