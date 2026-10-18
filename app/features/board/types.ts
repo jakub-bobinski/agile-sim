@@ -4,4 +4,6 @@ export type Task = {
   description: string;
   status: "todo" | "in-progress" | "done" | "wont-do";
   priority: "low" | "medium" | "high";
+  requiredProgress: number;
+  progress: number;
 };

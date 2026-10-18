@@ -25,6 +25,8 @@ export async function loader() {
       description: "Create a login page and authentication flow.",
       status: "in-progress",
       priority: "high",
+      requiredProgress: 10,
+      progress: 0,
     },
     {
       id: "2",
@@ -32,6 +34,8 @@ export async function loader() {
       description: "Create a responsive landing page for the app.",
       status: "todo",
       priority: "medium",
+      requiredProgress: 13,
+      progress: 0,
     },
     {
       id: "3",
@@ -39,6 +43,8 @@ export async function loader() {
       description: "Test.",
       status: "done",
       priority: "high",
+      requiredProgress: 22,
+      progress: 0,
     },
     {
       id: "4",
@@ -46,6 +52,8 @@ export async function loader() {
       description: "Test.",
       status: "wont-do",
       priority: "high",
+      requiredProgress: 3,
+      progress: 0,
     },
   ];
 

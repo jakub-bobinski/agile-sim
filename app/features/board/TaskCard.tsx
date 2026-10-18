@@ -1,3 +1,4 @@
+import { getDifficulty, type Difficulty } from "./difficulty";
 import type { Task } from "./types";
 
 type TaskCardProps = {
@@ -11,7 +12,16 @@ const priorityStyles: Record<Task["priority"], string> = {
   high: "bg-red-100 text-red-800",
 };
 
+const difficultyStyles: Record<Difficulty, string> = {
+  easy: "text-emerald-700",
+  medium: "text-amber-700",
+  hard: "text-red-700",
+};
+
 export function TaskCard({ task, dataTestId }: TaskCardProps) {
+  const difficulty = getDifficulty(task.requiredProgress);
+  const percent = Math.min(100, (task.progress / task.requiredProgress) * 100);
+
   return (
     <button
       type="button"
@@ -30,6 +40,23 @@ export function TaskCard({ task, dataTestId }: TaskCardProps) {
       </span>
       <span className="mt-1 block text-xs text-slate-600">
         {task.description}
+      </span>
+      <span className="mt-3 flex items-center justify-between text-xs">
+        <span className={`font-medium ${difficultyStyles[difficulty]}`}>
+          {difficulty}
+        </span>
+        <span className="text-slate-500 tabular-nums">
+          {task.progress} / {task.requiredProgress}
+        </span>
+      </span>
+      <span
+        aria-hidden="true"
+        className="mt-1 block h-1.5 overflow-hidden rounded-full bg-slate-100"
+      >
+        <span
+          className="block h-full rounded-full bg-blue-500 transition-[width] duration-150"
+          style={{ width: `${percent}%` }}
+        />
       </span>
     </button>
   );
