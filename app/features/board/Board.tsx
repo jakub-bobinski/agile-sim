@@ -6,22 +6,24 @@ type BoardProps = {
 };
 
 type ColumnConfig = {
+  id: string;
   title: string;
   statuses: Task["status"][];
 };
 
 const columns: ColumnConfig[] = [
-  { title: "To Do", statuses: ["todo", "in-progress"] },
-  { title: "Done", statuses: ["done"] },
-  { title: "Won't Do", statuses: ["wont-do"] },
+  { id: "todo", title: "To Do", statuses: ["todo", "in-progress"] },
+  { id: "done", title: "Done", statuses: ["done"] },
+  { id: "wont-do", title: "Won't Do", statuses: ["wont-do"] },
 ];
 
 export function Board({ tasks }: BoardProps) {
   return (
-    <div className="flex space-x-4 p-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       {columns.map((column) => (
         <Column
-          key={column.title}
+          key={column.id}
+          id={column.id}
           title={column.title}
           tasks={tasks.filter((task) => column.statuses.includes(task.status))}
         />
