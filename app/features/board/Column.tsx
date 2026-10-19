@@ -5,9 +5,10 @@ type ColumnProps = {
   id: string;
   title: string;
   tasks: Task[];
+  onTaskClick: (taskId: string) => void;
 };
 
-export function Column({ id, title, tasks }: ColumnProps) {
+export function Column({ id, title, tasks, onTaskClick }: ColumnProps) {
   const headingId = `column-${id}-heading`;
 
   return (
@@ -27,7 +28,11 @@ export function Column({ id, title, tasks }: ColumnProps) {
       <ul className="flex flex-col gap-2">
         {tasks.map((task) => (
           <li key={task.id}>
-            <TaskCard task={task} dataTestId={`task-card-id-${task.id}`} />
+            <TaskCard
+              task={task}
+              onClick={() => onTaskClick(task.id)}
+              dataTestId={`task-card-id-${task.id}`}
+            />
           </li>
         ))}
       </ul>
