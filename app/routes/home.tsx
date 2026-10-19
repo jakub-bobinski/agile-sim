@@ -1,6 +1,6 @@
 import type { Task } from "~/features/board/types";
 import type { Route } from "./+types/home";
-import { Board } from "~/features/board/Board";
+import { Game } from "~/features/game/Game";
 
 export function meta() {
   return [{ title: "Agile Sim" }];
@@ -12,7 +12,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   return (
     <main className="mx-auto max-w-6xl p-6">
       <h1 className="mb-6 text-2xl font-bold text-slate-900">Agile Sim</h1>
-      <Board tasks={tasks} />
+      <Game initialTasks={tasks} />
     </main>
   );
 }

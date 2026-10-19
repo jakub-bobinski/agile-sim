@@ -1,9 +1,9 @@
-import { useState } from "react";
 import type { Task } from "./types";
 import { Column } from "./Column";
 
 type BoardProps = {
   tasks: Task[];
+  onTaskClick: (taskId: string) => void;
 };
 
 type ColumnConfig = {
@@ -18,23 +18,7 @@ const columns: ColumnConfig[] = [
   { id: "wont-do", title: "Won't Do", statuses: ["wont-do"] },
 ];
 
-export function Board({ tasks: initialTasks }: BoardProps) {
-  const [tasks, setTasks] = useState(initialTasks);
-
-  function handleTaskClick(taskId: string) {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => {
-        if (task.id !== taskId) return task;
-
-        const progress = Math.min(task.progress + 1, task.requiredProgress);
-        const status =
-          progress === task.requiredProgress ? "done" : "in-progress";
-
-        return { ...task, progress, status };
-      }),
-    );
-  }
-
+export function Board({ tasks, onTaskClick }: BoardProps) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       {columns.map((column) => (
@@ -43,7 +27,7 @@ export function Board({ tasks: initialTasks }: BoardProps) {
           id={column.id}
           title={column.title}
           tasks={tasks.filter((task) => column.statuses.includes(task.status))}
-          onTaskClick={handleTaskClick}
+          onTaskClick={onTaskClick}
         />
       ))}
     </div>
