@@ -6,4 +6,5 @@ export type Task = {
   priority: "low" | "medium" | "high";
   requiredProgress: number;
   progress: number;
+  sprintId?: string;
 };
