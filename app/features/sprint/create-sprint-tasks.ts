@@ -1,5 +1,5 @@
 import type { Task } from "~/features/board/types";
-import { pickRandom, randomInt } from "~/lib/random";
+import { pickRandom, randomInt, shuffle } from "~/lib/random";
 
 type TaskContent = Pick<Task, "title" | "description">;
 
@@ -26,9 +26,13 @@ const TASKS_PER_SPRINT = 5;
 const MIN_REQUIRED_CLICKS = 3;
 const MAX_REQUIRED_CLICKS = 15;
 
-function createTask(sprintNumber: number, index: number): Task {
+function createTask(
+  content: TaskContent,
+  sprintNumber: number,
+  index: number,
+): Task {
   return {
-    ...pickRandom(TASK_CONTENT),
+    ...content,
     id: `s${sprintNumber}-${index}`,
     priority: pickRandom(PRIORITIES),
     requiredProgress: randomInt(MIN_REQUIRED_CLICKS, MAX_REQUIRED_CLICKS),
@@ -38,7 +42,7 @@ function createTask(sprintNumber: number, index: number): Task {
 }
 
 export function createSprintTasks(sprintNumber: number): Task[] {
-  return Array.from({ length: TASKS_PER_SPRINT }, (_, index) =>
-    createTask(sprintNumber, index),
-  );
+  return shuffle(TASK_CONTENT)
+    .slice(0, TASKS_PER_SPRINT) //shuffle to not make duplicates when sprint changes
+    .map((content, index) => createTask(content, sprintNumber, index));
 }

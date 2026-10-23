@@ -18,6 +18,5 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 }
 
 export async function loader() {
-  const tasks = createSprintTasks(1);
-  return { tasks };
+  return { tasks: createSprintTasks(1) };
 }
