@@ -1,4 +1,5 @@
 import { getDifficulty, type Difficulty } from "./difficulty";
+import { isTaskClosed } from "./task-rules";
 import type { Task } from "./types";
 
 type TaskCardProps = {
@@ -22,7 +23,7 @@ const difficultyStyles: Record<Difficulty, string> = {
 export function TaskCard({ task, dataTestId, onClick }: TaskCardProps) {
   const difficulty = getDifficulty(task.requiredProgress);
   const percent = Math.min(100, (task.progress / task.requiredProgress) * 100);
-  const isClosed = task.status === "done" || task.status === "wont-do";
+  const isClosed = isTaskClosed(task);
   const closedText = isClosed ? "line-through decoration-slate-400" : "";
 
   return (

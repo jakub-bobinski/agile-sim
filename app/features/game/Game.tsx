@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Board } from "~/features/board/Board";
+import { applyClick } from "~/features/board/task-rules";
 import type { Task } from "~/features/board/types";
 import { createSprintTasks } from "~/features/sprint/create-sprint-tasks";
 import { SprintBar } from "~/features/sprint/SprintBar";
@@ -17,15 +18,9 @@ export function Game({ initialTasks }: GameProps) {
   const [sprintNumber, setSprintNumber] = useState(1);
 
   function handleTaskClick(taskId: string) {
-    const nextTasks: Task[] = tasks.map((task) => {
-      if (task.id !== taskId) return task;
-
-      const progress = Math.min(task.progress + 1, task.requiredProgress);
-      const status =
-        progress === task.requiredProgress ? "done" : "in-progress";
-
-      return { ...task, progress, status };
-    });
+    const nextTasks = tasks.map((task) =>
+      task.id === taskId ? applyClick(task) : task,
+    );
 
     if (isSprintComplete(nextTasks)) {
       const nextSprintNumber = sprintNumber + 1;
