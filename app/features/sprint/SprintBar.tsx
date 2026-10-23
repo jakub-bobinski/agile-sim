@@ -1,12 +1,7 @@
-import type { Task } from "../board/types";
-import { getSprintProgress } from "./sprint-rules";
-
 export type SprintBarProps = {
-  tasks: Task[];
+  progress: number;
 };
 
-export function SprintBar({ tasks }: SprintBarProps) {
-  const progress = getSprintProgress(tasks);
-
+export function SprintBar({ progress }: SprintBarProps) {
   return <span>{Math.round(progress)}%</span>;
 }

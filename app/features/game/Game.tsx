@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Board } from "~/features/board/Board";
 import type { Task } from "~/features/board/types";
 import { SprintBar } from "../sprint/SprintBar";
+import { getSprintProgress } from "../sprint/sprint-rules";
 
 export type GameProps = {
   initialTasks: Task[];
@@ -26,7 +27,7 @@ export function Game({ initialTasks }: GameProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      <SprintBar tasks={tasks}></SprintBar>
+      <SprintBar progress={getSprintProgress(tasks)}></SprintBar>
       <Board tasks={tasks} onTaskClick={handleTaskClick} />
     </div>
   );
