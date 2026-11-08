@@ -12,7 +12,11 @@ import {
   isSprintComplete,
 } from "~/features/sprint/sprint-rules";
 import type { SkillId, SkillLevels } from "~/features/skills/types";
-import { getSkillCost, getSkillOptions } from "~/features/skills/skill-rules";
+import {
+  applyUpgrade,
+  getClickPower,
+  getSkillOptions,
+} from "~/features/skills/skill-rules";
 
 export type GameProps = {
   initialTasks: Task[];
@@ -22,11 +26,11 @@ export function Game({ initialTasks }: GameProps) {
   const [tasks, setTasks] = useState(initialTasks);
   const [sprintNumber, setSprintNumber] = useState(1);
   const [skillLevels, setSkillLevels] = useState<SkillLevels>({
-    clickPower: 1,
+    clickPower: 0,
     aiIntern: 0,
   });
   const [points, setPoints] = useState(0);
-  const clickPower = skillLevels.clickPower;
+  const clickPower = getClickPower(skillLevels);
   const skillOptions = getSkillOptions(skillLevels, points);
 
   function handleTaskClick(taskId: string) {
@@ -36,7 +40,7 @@ export function Game({ initialTasks }: GameProps) {
 
     if (isSprintComplete(nextTasks)) {
       const nextSprintNumber = sprintNumber + 1;
-      setPoints((p) => p + getSprintReward(sprintNumber));
+      setPoints(points + getSprintReward(sprintNumber));
       setSprintNumber(nextSprintNumber);
       setTasks(createSprintTasks(nextSprintNumber));
     } else {
@@ -45,10 +49,9 @@ export function Game({ initialTasks }: GameProps) {
   }
 
   function handleUpgrade(skillId: SkillId) {
-    const cost = getSkillCost(skillId, skillLevels);
-    if (cost > points) return;
-    setPoints((p) => p - cost);
-    setSkillLevels((s) => ({ ...s, [skillId]: s[skillId] + 1 }));
+    const next = applyUpgrade({ skillLevels, points }, skillId);
+    setSkillLevels(next.skillLevels);
+    setPoints(next.points);
   }
 
   return (
