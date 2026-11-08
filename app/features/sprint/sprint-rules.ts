@@ -18,3 +18,7 @@ export function isSprintComplete(tasks: Task[]): boolean {
   const { done, required } = getSprintClicks(tasks);
   return required > 0 && done >= required;
 }
+
+export function getSprintReward(sprintNumber: number): number {
+  return sprintNumber;
+}

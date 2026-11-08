@@ -5,10 +5,14 @@ import type { Task } from "~/features/board/types";
 import { createSprintTasks } from "~/features/sprint/create-sprint-tasks";
 import { SprintBar } from "~/features/sprint/SprintBar";
 import { UserPanel } from "~/features/user-panel/UserPanel";
+import { SkillShop } from "~/features/skills/SkillShop";
 import {
   getSprintProgress,
+  getSprintReward,
   isSprintComplete,
 } from "~/features/sprint/sprint-rules";
+import type { SkillId, SkillLevels } from "~/features/skills/types";
+import { getSkillCost, getSkillOptions } from "~/features/skills/skill-rules";
 
 export type GameProps = {
   initialTasks: Task[];
@@ -17,7 +21,13 @@ export type GameProps = {
 export function Game({ initialTasks }: GameProps) {
   const [tasks, setTasks] = useState(initialTasks);
   const [sprintNumber, setSprintNumber] = useState(1);
-  const clickPower: number = 1;
+  const [skillLevels, setSkillLevels] = useState<SkillLevels>({
+    clickPower: 1,
+    aiIntern: 0,
+  });
+  const [points, setPoints] = useState(0);
+  const clickPower = skillLevels.clickPower;
+  const skillOptions = getSkillOptions(skillLevels, points);
 
   function handleTaskClick(taskId: string) {
     const nextTasks = tasks.map((task) =>
@@ -26,11 +36,19 @@ export function Game({ initialTasks }: GameProps) {
 
     if (isSprintComplete(nextTasks)) {
       const nextSprintNumber = sprintNumber + 1;
+      setPoints((p) => p + getSprintReward(sprintNumber));
       setSprintNumber(nextSprintNumber);
       setTasks(createSprintTasks(nextSprintNumber));
     } else {
       setTasks(nextTasks);
     }
+  }
+
+  function handleUpgrade(skillId: SkillId) {
+    const cost = getSkillCost(skillId, skillLevels);
+    if (cost > points) return;
+    setPoints((p) => p - cost);
+    setSkillLevels((s) => ({ ...s, [skillId]: s[skillId] + 1 }));
   }
 
   return (
@@ -40,7 +58,10 @@ export function Game({ initialTasks }: GameProps) {
         progress={getSprintProgress(tasks)}
       />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[16rem_1fr]">
-        <UserPanel clickPower={clickPower} />
+        <div className="flex flex-col gap-6">
+          <UserPanel clickPower={clickPower} points={points} />
+          <SkillShop options={skillOptions} onUpgrade={handleUpgrade} />
+        </div>
         <Board tasks={tasks} onTaskClick={handleTaskClick} />
       </div>
     </div>
