@@ -19,6 +19,8 @@ export function isSprintComplete(tasks: Task[]): boolean {
   return required > 0 && done >= required;
 }
 
+const SPRINTS_PER_REWARD_STEP = 3;
+
 export function getSprintReward(sprintNumber: number): number {
-  return sprintNumber;
+  return 1 + Math.floor(sprintNumber / SPRINTS_PER_REWARD_STEP);
 }

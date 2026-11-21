@@ -7,6 +7,7 @@ export type SkillOption = {
   id: SkillId;
   level: number;
   cost: number;
+  isMaxed: boolean;
   canUpgrade: boolean;
 };
 
@@ -20,8 +21,8 @@ export function getClickPower(skillLevels: SkillLevels): number {
 }
 
 export function getSkillCost(id: SkillId, skillLevels: SkillLevels): number {
-  const { baseCost, costStep } = SKILL_CONFIG[id];
-  return baseCost + costStep * getTotalUpgrades(skillLevels);
+  const { baseCost, costGrowth } = SKILL_CONFIG[id];
+  return Math.round(baseCost * costGrowth ** skillLevels[id]);
 }
 
 export function getSkillOptions(
@@ -29,8 +30,11 @@ export function getSkillOptions(
   points: number,
 ): SkillOption[] {
   return SKILL_IDS.map((id) => {
+    const level = skillLevels[id];
+    const { maxLevel } = SKILL_CONFIG[id];
+    const isMaxed = maxLevel !== undefined && level >= maxLevel;
     const cost = getSkillCost(id, skillLevels);
-    return { id, level: skillLevels[id], cost, canUpgrade: cost <= points };
+    return { id, level, cost, isMaxed, canUpgrade: !isMaxed && cost <= points };
   });
 }
 
@@ -45,8 +49,4 @@ export function applyUpgrade(state: SkillState, id: SkillId): SkillState {
     skillLevels: { ...skillLevels, [id]: skillLevels[id] + 1 },
     points: points - option.cost,
   };
-}
-
-export function getTotalUpgrades(skillLevels: SkillLevels): number {
-  return Object.values(skillLevels).reduce((sum, level) => sum + level, 0);
 }

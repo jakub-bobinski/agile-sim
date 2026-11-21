@@ -1,23 +1,27 @@
+import { TASKS_PER_SPRINT } from "~/features/sprint/create-sprint-tasks";
 import type { SkillId } from "./types";
 
 type SkillConfig = {
   name: string;
   description: string;
   baseCost: number;
-  costStep: number;
+  costGrowth: number;
+  maxLevel?: number;
 };
 
 export const SKILL_CONFIG: Record<SkillId, SkillConfig> = {
   clickPower: {
     name: "Click Power",
-    description: "Each click adds more progress to a task.",
-    baseCost: 1,
-    costStep: 2,
+    description: "Each click (yours and your interns') adds more progress.",
+    baseCost: 2,
+    costGrowth: 1.6,
   },
   aiIntern: {
     name: "AI Intern",
-    description: "Automatically works on tasks over time.",
+    description: "Hires an intern who slowly works on a random task.",
     baseCost: 5,
-    costStep: 3,
+    costGrowth: 1.8,
+    // More interns than tasks would just sit idle.
+    maxLevel: TASKS_PER_SPRINT,
   },
 };

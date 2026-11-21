@@ -20,7 +20,7 @@ export function SkillShop({ options, onUpgrade }: SkillShopProps) {
         Skills
       </h2>
       <ul className="flex flex-col gap-3">
-        {options.map(({ id, level, cost, canUpgrade }) => {
+        {options.map(({ id, level, cost, isMaxed, canUpgrade }) => {
           const { name, description } = SKILL_CONFIG[id];
 
           return (
@@ -43,8 +43,16 @@ export function SkillShop({ options, onUpgrade }: SkillShopProps) {
                 }}
                 className="mt-3 w-full cursor-pointer rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500 disabled:active:scale-100"
               >
-                Upgrade <span className="sr-only">{name}</span>
-                <span className="tabular-nums">· {cost} pts</span>
+                {isMaxed ? (
+                  <>
+                    Max level <span className="sr-only">for {name}</span>
+                  </>
+                ) : (
+                  <>
+                    Upgrade <span className="sr-only">{name}</span>
+                    <span className="tabular-nums">· {cost} pts</span>
+                  </>
+                )}
               </button>
             </li>
           );

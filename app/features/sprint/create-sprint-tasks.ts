@@ -1,3 +1,4 @@
+import { getDifficulty } from "~/features/board/difficulty";
 import type { Task } from "~/features/board/types";
 import { pickRandom, randomInt, shuffle } from "~/lib/random";
 
@@ -22,20 +23,30 @@ const TASK_CONTENT: TaskContent[] = [
 
 const PRIORITIES: Task["priority"][] = ["low", "medium", "high"];
 
-const TASKS_PER_SPRINT = 5;
+export const TASKS_PER_SPRINT = 5;
 const MIN_REQUIRED_CLICKS = 3;
 const MAX_REQUIRED_CLICKS = 15;
+const DIFFICULTY_GROWTH = 1.12;
+
+function getDifficultyMultiplier(sprintNumber: number): number {
+  return DIFFICULTY_GROWTH ** (sprintNumber - 1);
+}
 
 function createTask(
   content: TaskContent,
   sprintNumber: number,
   index: number,
 ): Task {
+  const baseClicks = randomInt(MIN_REQUIRED_CLICKS, MAX_REQUIRED_CLICKS);
+
   return {
     ...content,
     id: `s${sprintNumber}-${index}`,
     priority: pickRandom(PRIORITIES),
-    requiredProgress: randomInt(MIN_REQUIRED_CLICKS, MAX_REQUIRED_CLICKS),
+    difficulty: getDifficulty(baseClicks),
+    requiredProgress: Math.round(
+      baseClicks * getDifficultyMultiplier(sprintNumber),
+    ),
     status: "todo",
     progress: 0,
   };

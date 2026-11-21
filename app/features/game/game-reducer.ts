@@ -52,6 +52,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         state.tasks,
         state.interns,
         state.skillLevels.aiIntern,
+        getClickPower(state.skillLevels),
       );
       return finishSprintIfComplete({ ...state, tasks, interns });
     }

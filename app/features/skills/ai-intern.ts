@@ -3,7 +3,6 @@ import type { Task } from "~/features/board/types";
 import { pickRandom } from "~/lib/random";
 
 export const INTERN_TICK_MS = 2000;
-const INTERN_POWER = 1;
 
 export type Intern = {
   taskId: string | null;
@@ -19,6 +18,7 @@ export function workInterns(
   tasks: Task[],
   interns: Intern[],
   internCount: number,
+  power: number,
 ): InternWorkResult {
   const openTaskIds = tasks
     .filter((task) => !isTaskClosed(task))
@@ -45,7 +45,7 @@ export function workInterns(
 
   // progress for each
   const nextTasks = tasks.map((task) =>
-    assigned.includes(task.id) ? applyClick(task, INTERN_POWER) : task,
+    assigned.includes(task.id) ? applyClick(task, power) : task,
   );
 
   return {
