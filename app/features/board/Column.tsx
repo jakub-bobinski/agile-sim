@@ -1,20 +1,63 @@
+import { useState, type DragEvent } from "react";
 import type { Task } from "./types";
-import { TaskCard } from "./TaskCard";
+import { TASK_ID_MIME, TaskCard } from "./TaskCard";
 
 type ColumnProps = {
   id: string;
   title: string;
   tasks: Task[];
   onTaskClick: (taskId: string) => void;
+  onTaskDragStart: (taskId: string) => void;
+  onTaskDragEnd: () => void;
+  isDropTarget?: boolean;
+  onDropTask?: (taskId: string) => void;
 };
 
-export function Column({ id, title, tasks, onTaskClick }: ColumnProps) {
+export function Column({
+  id,
+  title,
+  tasks,
+  onTaskClick,
+  onTaskDragStart,
+  onTaskDragEnd,
+  isDropTarget = false,
+  onDropTask,
+}: ColumnProps) {
   const headingId = `column-${id}-heading`;
+  const [isOver, setIsOver] = useState(false);
+
+  function handleDragOver(event: DragEvent<HTMLElement>) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+    setIsOver(true);
+  }
+
+  function handleDragLeave(event: DragEvent<HTMLElement>) {
+    const next = event.relatedTarget;
+    if (next instanceof Node && event.currentTarget.contains(next)) return;
+    setIsOver(false);
+  }
+
+  function handleDrop(event: DragEvent<HTMLElement>) {
+    event.preventDefault();
+    setIsOver(false);
+    const taskId = event.dataTransfer.getData(TASK_ID_MIME);
+    if (taskId && onDropTask) onDropTask(taskId);
+  }
+
+  const dropStyles = isDropTarget
+    ? isOver
+      ? "bg-rose-100 ring-2 ring-rose-400"
+      : "bg-rose-50 ring-2 ring-rose-200 ring-dashed"
+    : "bg-slate-100";
 
   return (
     <section
       aria-labelledby={headingId}
-      className="flex min-h-96 flex-col rounded-xl bg-slate-100 p-3"
+      onDragOver={onDropTask ? handleDragOver : undefined}
+      onDragLeave={onDropTask ? handleDragLeave : undefined}
+      onDrop={onDropTask ? handleDrop : undefined}
+      className={`flex min-h-96 flex-col rounded-xl p-3 transition-colors ${dropStyles}`}
     >
       <h2
         id={headingId}
@@ -31,6 +74,8 @@ export function Column({ id, title, tasks, onTaskClick }: ColumnProps) {
             <TaskCard
               task={task}
               onClick={() => onTaskClick(task.id)}
+              onDragStart={() => onTaskDragStart(task.id)}
+              onDragEnd={onTaskDragEnd}
               dataTestId={`task-card-id-${task.id}`}
             />
           </li>

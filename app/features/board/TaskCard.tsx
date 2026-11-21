@@ -1,11 +1,16 @@
+import type { DragEvent } from "react";
 import type { Difficulty } from "./difficulty";
-import { isTaskClosed } from "./task-rules";
+import { canMarkWontDo, isTaskClosed } from "./task-rules";
 import type { Task } from "./types";
+
+export const TASK_ID_MIME = "text/plain";
 
 type TaskCardProps = {
   task: Task;
   dataTestId?: string;
   onClick: () => void;
+  onDragStart: () => void;
+  onDragEnd: () => void;
 };
 
 const priorityStyles: Record<Task["priority"], string> = {
@@ -20,17 +25,33 @@ const difficultyStyles: Record<Difficulty, string> = {
   hard: "text-red-700",
 };
 
-export function TaskCard({ task, dataTestId, onClick }: TaskCardProps) {
+export function TaskCard({
+  task,
+  dataTestId,
+  onClick,
+  onDragStart,
+  onDragEnd,
+}: TaskCardProps) {
   const { difficulty } = task;
   const percent = Math.min(100, (task.progress / task.requiredProgress) * 100);
   const isClosed = isTaskClosed(task);
+  const isDraggable = canMarkWontDo(task);
   const closedText = isClosed ? "line-through decoration-slate-400" : "";
+
+  function handleDragStart(event: DragEvent<HTMLButtonElement>) {
+    event.dataTransfer.setData(TASK_ID_MIME, task.id);
+    event.dataTransfer.effectAllowed = "move";
+    onDragStart();
+  }
 
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={isClosed}
+      draggable={isDraggable}
+      onDragStart={isDraggable ? handleDragStart : undefined}
+      onDragEnd={isDraggable ? onDragEnd : undefined}
       className="block w-full cursor-pointer rounded-lg border border-slate-200 bg-white p-3 text-left shadow-sm transition select-none hover:shadow-md focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none active:scale-[0.98] disabled:cursor-default disabled:bg-slate-50 disabled:opacity-60 disabled:shadow-none disabled:hover:shadow-none disabled:active:scale-100"
       data-testid={dataTestId}
     >

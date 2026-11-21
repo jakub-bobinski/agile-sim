@@ -16,20 +16,30 @@ export function Game({ initialTasks }: GameProps) {
     points,
     clickPower,
     sprintProgress,
+    sprintReward,
     skillOptions,
     clickTask,
+    dropTaskToWontDo,
     upgradeSkill,
   } = useGame(initialTasks);
 
   return (
     <div className="flex flex-col gap-6">
-      <SprintBar sprintNumber={sprintNumber} progress={sprintProgress} />
+      <SprintBar
+        sprintNumber={sprintNumber}
+        progress={sprintProgress}
+        reward={sprintReward}
+      />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[16rem_1fr]">
         <div className="flex flex-col gap-6">
           <UserPanel clickPower={clickPower} points={points} />
           <SkillShop options={skillOptions} onUpgrade={upgradeSkill} />
         </div>
-        <Board tasks={tasks} onTaskClick={clickTask} />
+        <Board
+          tasks={tasks}
+          onTaskClick={clickTask}
+          onTaskWontDo={dropTaskToWontDo}
+        />
       </div>
     </div>
   );

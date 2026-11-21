@@ -24,7 +24,9 @@ export function UserPanel({ clickPower, points }: UserPanelProps) {
         </div>
         <div className="flex items-baseline justify-between rounded-lg bg-slate-50 px-3 py-2">
           <dt className="text-sm text-slate-600">Points</dt>
-          <dd className="text-lg font-semibold text-slate-900 tabular-nums">
+          <dd
+            className={`text-lg font-semibold tabular-nums ${points < 0 ? "text-rose-600" : "text-slate-900"}`}
+          >
             {points}
           </dd>
         </div>
