@@ -1,27 +1,51 @@
 import { getDifficulty } from "~/features/board/difficulty";
 import type { Task } from "~/features/board/types";
-import { pickRandom, randomInt, shuffle } from "~/lib/random";
+import { randomInt, shuffle } from "~/lib/random";
 
-type TaskContent = Pick<Task, "title" | "description">;
+export type TaskContent = Pick<Task, "title" | "description" | "priority">;
 
-const TASK_CONTENT: TaskContent[] = [
-  { title: "Fix login bug", description: "Users can't log in with SSO." },
-  { title: "Write unit tests", description: "Cover the payment module." },
-  { title: "Update dependencies", description: "Bump outdated npm packages." },
+export const DEFAULT_TASK_CONTENT: TaskContent[] = [
+  {
+    title: "Fix login bug",
+    description: "Users can't log in with SSO.",
+    priority: "high",
+  },
+  {
+    title: "Write unit tests",
+    description: "Cover the payment module.",
+    priority: "medium",
+  },
+  {
+    title: "Update dependencies",
+    description: "Bump outdated npm packages.",
+    priority: "low",
+  },
   {
     title: "Refactor API client",
     description: "Remove duplicated fetch logic.",
+    priority: "medium",
   },
-  { title: "Add dark mode", description: "Support the system color scheme." },
-  { title: "Improve page load", description: "Lazy-load heavy components." },
+  {
+    title: "Add dark mode",
+    description: "Support the system color scheme.",
+    priority: "low",
+  },
+  {
+    title: "Improve page load",
+    description: "Lazy-load heavy components.",
+    priority: "medium",
+  },
   {
     title: "Fix flaky E2E test",
     description: "Checkout test fails randomly on CI.",
+    priority: "high",
   },
-  { title: "Write release notes", description: "Summarise changes for v2.0." },
+  {
+    title: "Write release notes",
+    description: "Summarise changes for v2.0.",
+    priority: "low",
+  },
 ];
-
-const PRIORITIES: Task["priority"][] = ["low", "medium", "high"];
 
 export const TASKS_PER_SPRINT = 5;
 const MIN_REQUIRED_CLICKS = 3;
@@ -40,9 +64,10 @@ function createTask(
   const baseClicks = randomInt(MIN_REQUIRED_CLICKS, MAX_REQUIRED_CLICKS);
 
   return {
-    ...content,
+    title: content.title,
+    description: content.description,
+    priority: content.priority,
     id: `s${sprintNumber}-${index}`,
-    priority: pickRandom(PRIORITIES),
     difficulty: getDifficulty(baseClicks),
     requiredProgress: Math.round(
       baseClicks * getDifficultyMultiplier(sprintNumber),
@@ -52,8 +77,12 @@ function createTask(
   };
 }
 
-export function createSprintTasks(sprintNumber: number): Task[] {
-  return shuffle(TASK_CONTENT)
-    .slice(0, TASKS_PER_SPRINT) //shuffle to not make duplicates when sprint changes
+export function createSprintTasks(
+  sprintNumber: number,
+  pool: TaskContent[] = DEFAULT_TASK_CONTENT,
+): Task[] {
+  const source = pool.length > 0 ? pool : DEFAULT_TASK_CONTENT;
+  return shuffle(source)
+    .slice(0, TASKS_PER_SPRINT)
     .map((content, index) => createTask(content, sprintNumber, index));
 }
