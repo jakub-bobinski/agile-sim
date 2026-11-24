@@ -1,4 +1,5 @@
 import { useEffect, useReducer } from "react";
+import type { BacklogInput } from "~/features/backlog/types";
 import type { Task } from "~/features/board/types";
 import { INTERN_TICK_MS } from "~/features/skills/ai-intern";
 import { getClickPower, getSkillOptions } from "~/features/skills/skill-rules";
@@ -9,11 +10,10 @@ import {
 } from "~/features/sprint/sprint-rules";
 import { createInitialGameState, gameReducer } from "./game-reducer";
 
-export function useGame(initialTasks: Task[]) {
+export function useGame(initialTasks: Task[], backlog: BacklogInput[]) {
   const [state, dispatch] = useReducer(
     gameReducer,
-    initialTasks,
-    createInitialGameState,
+    createInitialGameState(initialTasks, backlog),
   );
 
   const hasInterns = state.skillLevels.aiIntern > 0;

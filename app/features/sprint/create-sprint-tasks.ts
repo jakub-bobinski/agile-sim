@@ -78,7 +78,7 @@ function createTask(
 
 export function createSprintTasks(
   sprintNumber: number,
-  pool: BacklogInput[] = DEFAULT_TASK_CONTENT,
+  pool: BacklogInput[],
 ): Task[] {
   const source = pool.length > 0 ? pool : DEFAULT_TASK_CONTENT;
   return shuffle(source)

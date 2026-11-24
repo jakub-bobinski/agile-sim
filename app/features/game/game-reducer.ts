@@ -1,4 +1,5 @@
 import { applyClick, markWontDo } from "~/features/board/task-rules";
+import type { BacklogInput } from "~/features/backlog/types";
 import type { Task } from "~/features/board/types";
 import { type Intern, workInterns } from "~/features/skills/ai-intern";
 import { applyUpgrade, getClickPower } from "~/features/skills/skill-rules";
@@ -15,6 +16,7 @@ export type GameState = {
   points: number;
   skillLevels: SkillLevels;
   interns: Intern[];
+  backlog: BacklogInput[];
 };
 
 export type GameAction =
@@ -23,9 +25,13 @@ export type GameAction =
   | { type: "skillUpgraded"; skillId: SkillId }
   | { type: "internsWorked" };
 
-export function createInitialGameState(tasks: Task[]): GameState {
+export function createInitialGameState(
+  tasks: Task[],
+  backlog: BacklogInput[],
+): GameState {
   return {
     tasks,
+    backlog,
     sprintNumber: 1,
     points: 0,
     skillLevels: { clickPower: 0, aiIntern: 0 },
@@ -75,7 +81,7 @@ function finishSprintIfComplete(state: GameState): GameState {
     ...state,
     sprintNumber,
     points: state.points + getSprintReward(state.sprintNumber, state.tasks),
-    tasks: createSprintTasks(sprintNumber),
+    tasks: createSprintTasks(sprintNumber, state.backlog),
     interns: state.interns.map(() => ({ taskId: null })),
   };
 }

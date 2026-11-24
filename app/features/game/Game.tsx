@@ -1,4 +1,5 @@
 import { Board } from "~/features/board/Board";
+import type { BacklogInput } from "~/features/backlog/types";
 import type { Task } from "~/features/board/types";
 import { SkillShop } from "~/features/skills/SkillShop";
 import { SprintBar } from "~/features/sprint/SprintBar";
@@ -7,9 +8,10 @@ import { useGame } from "./useGame";
 
 export type GameProps = {
   initialTasks: Task[];
+  backlog: BacklogInput[];
 };
 
-export function Game({ initialTasks }: GameProps) {
+export function Game({ initialTasks, backlog }: GameProps) {
   const {
     tasks,
     sprintNumber,
@@ -21,7 +23,7 @@ export function Game({ initialTasks }: GameProps) {
     clickTask,
     dropTaskToWontDo,
     upgradeSkill,
-  } = useGame(initialTasks);
+  } = useGame(initialTasks, backlog);
 
   return (
     <div className="flex flex-col gap-6">

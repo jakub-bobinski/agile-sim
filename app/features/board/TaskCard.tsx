@@ -1,4 +1,5 @@
 import type { DragEvent } from "react";
+import { PriorityBadge } from "~/components/ui/PriorityBadge";
 import type { Difficulty } from "./difficulty";
 import { canMarkWontDo, isTaskClosed } from "./task-rules";
 import type { Task } from "./types";
@@ -11,12 +12,6 @@ type TaskCardProps = {
   onClick: () => void;
   onDragStart: () => void;
   onDragEnd: () => void;
-};
-
-const priorityStyles: Record<Task["priority"], string> = {
-  low: "bg-slate-100 text-slate-700",
-  medium: "bg-amber-100 text-amber-800",
-  high: "bg-red-100 text-red-800",
 };
 
 const difficultyStyles: Record<Difficulty, string> = {
@@ -59,11 +54,7 @@ export function TaskCard({
         <span className={`text-sm font-semibold text-slate-900 ${closedText}`}>
           {task.title}
         </span>
-        <span
-          className={`shrink-0 rounded px-2 py-0.5 text-xs font-medium ${priorityStyles[task.priority]}`}
-        >
-          {task.priority}
-        </span>
+        <PriorityBadge priority={task.priority} />
       </span>
       <span className={`mt-1 block text-xs text-slate-600 ${closedText}`}>
         {task.description}
