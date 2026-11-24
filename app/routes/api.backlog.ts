@@ -1,6 +1,6 @@
 import type { Route } from "./+types/api.backlog";
 import { createItem, listItems } from "~/features/backlog/backlog.server";
-import { jsonError, readJsonBody } from "~/features/backlog/http.server";
+import { jsonError } from "~/features/backlog/http.server";
 import { isPriority } from "~/features/backlog/types";
 import { validateBacklogInput } from "~/features/backlog/validation";
 
@@ -17,10 +17,8 @@ export async function action({ request }: Route.ActionArgs) {
     return jsonError(405, `Method ${request.method} not allowed`);
   }
 
-  const parsed = await readJsonBody(request);
-  if (!parsed.ok) return jsonError(400, "Request body must be valid JSON");
-
-  const result = validateBacklogInput(parsed.body);
+  const body: unknown = await request.json().catch(() => null);
+  const result = validateBacklogInput(body);
   if (!result.ok) {
     return jsonError(400, "Validation failed", result.fieldErrors);
   }

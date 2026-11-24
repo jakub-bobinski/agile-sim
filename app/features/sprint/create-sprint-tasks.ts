@@ -1,10 +1,9 @@
+import type { BacklogInput } from "~/features/backlog/types";
 import { getDifficulty } from "~/features/board/difficulty";
 import type { Task } from "~/features/board/types";
 import { randomInt, shuffle } from "~/lib/random";
 
-export type TaskContent = Pick<Task, "title" | "description" | "priority">;
-
-export const DEFAULT_TASK_CONTENT: TaskContent[] = [
+export const DEFAULT_TASK_CONTENT: BacklogInput[] = [
   {
     title: "Fix login bug",
     description: "Users can't log in with SSO.",
@@ -57,7 +56,7 @@ function getDifficultyMultiplier(sprintNumber: number): number {
 }
 
 function createTask(
-  content: TaskContent,
+  content: BacklogInput,
   sprintNumber: number,
   index: number,
 ): Task {
@@ -79,7 +78,7 @@ function createTask(
 
 export function createSprintTasks(
   sprintNumber: number,
-  pool: TaskContent[] = DEFAULT_TASK_CONTENT,
+  pool: BacklogInput[] = DEFAULT_TASK_CONTENT,
 ): Task[] {
   const source = pool.length > 0 ? pool : DEFAULT_TASK_CONTENT;
   return shuffle(source)

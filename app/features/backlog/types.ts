@@ -1,8 +1,4 @@
-import type { Task } from "~/features/board/types";
-
-export type Priority = Task["priority"];
-
-export const PRIORITIES: readonly Priority[] = ["low", "medium", "high"];
+import { PRIORITIES, type Priority } from "~/features/board/types";
 
 export type BacklogItem = {
   id: number;

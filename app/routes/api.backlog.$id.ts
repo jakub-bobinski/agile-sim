@@ -4,32 +4,21 @@ import {
   getItem,
   updateItem,
 } from "~/features/backlog/backlog.server";
-import {
-  jsonError,
-  notFound,
-  parseId,
-  readJsonBody,
-} from "~/features/backlog/http.server";
+import { jsonError, notFound } from "~/features/backlog/http.server";
 import { validateBacklogInput } from "~/features/backlog/validation";
 
 export function loader({ params }: Route.LoaderArgs) {
-  const id = parseId(params.id);
-  const item = id === null ? null : getItem(id);
+  const item = getItem(Number(params.id));
   return item ? Response.json(item) : notFound();
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
-  const id = parseId(params.id);
-  if (id === null) return notFound();
+  const id = Number(params.id);
 
   switch (request.method) {
     case "PUT": {
-      if (!getItem(id)) return notFound();
-
-      const parsed = await readJsonBody(request);
-      if (!parsed.ok) return jsonError(400, "Request body must be valid JSON");
-
-      const result = validateBacklogInput(parsed.body);
+      const body: unknown = await request.json().catch(() => null);
+      const result = validateBacklogInput(body);
       if (!result.ok) {
         return jsonError(400, "Validation failed", result.fieldErrors);
       }

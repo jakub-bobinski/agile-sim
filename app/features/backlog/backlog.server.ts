@@ -1,62 +1,56 @@
+import type { Priority } from "~/features/board/types";
 import { db } from "~/lib/db.server";
-import {
-  isPriority,
-  type BacklogInput,
-  type BacklogItem,
-  type Priority,
-} from "./types";
+import { isBacklogItem, type BacklogInput, type BacklogItem } from "./types";
 
-function toBacklogItem(row: Record<string, unknown>): BacklogItem {
-  const { id, title, description, priority, created_at } = row;
-  if (
-    typeof id !== "number" ||
-    typeof title !== "string" ||
-    typeof description !== "string" ||
-    !isPriority(priority) ||
-    typeof created_at !== "string"
-  ) {
+const COLUMNS = "id, title, description, priority, created_at AS createdAt";
+
+const selectAll = db.prepare(
+  `SELECT ${COLUMNS} FROM backlog_items ORDER BY id`,
+);
+const selectByPriority = db.prepare(
+  `SELECT ${COLUMNS} FROM backlog_items WHERE priority = ? ORDER BY id`,
+);
+const selectById = db.prepare(
+  `SELECT ${COLUMNS} FROM backlog_items WHERE id = ?`,
+);
+const insert = db.prepare(
+  `INSERT INTO backlog_items (title, description, priority) VALUES (?, ?, ?) RETURNING ${COLUMNS}`,
+);
+const update = db.prepare(
+  `UPDATE backlog_items SET title = ?, description = ?, priority = ? WHERE id = ? RETURNING ${COLUMNS}`,
+);
+const remove = db.prepare("DELETE FROM backlog_items WHERE id = ?");
+
+function toBacklogItem(row: unknown): BacklogItem {
+  if (!isBacklogItem(row))
     throw new Error("Unexpected backlog_items row shape");
-  }
-  return { id, title, description, priority, createdAt: created_at };
+  return row;
 }
 
 export function listItems(priority?: Priority): BacklogItem[] {
-  const rows = priority
-    ? db
-        .prepare("SELECT * FROM backlog_items WHERE priority = ? ORDER BY id")
-        .all(priority)
-    : db.prepare("SELECT * FROM backlog_items ORDER BY id").all();
+  const rows = priority ? selectByPriority.all(priority) : selectAll.all();
   return rows.map(toBacklogItem);
 }
 
 export function getItem(id: number): BacklogItem | null {
-  const row = db.prepare("SELECT * FROM backlog_items WHERE id = ?").get(id);
+  const row = selectById.get(id);
   return row ? toBacklogItem(row) : null;
 }
 
 export function createItem(input: BacklogInput): BacklogItem {
-  const row = db
-    .prepare(
-      "INSERT INTO backlog_items (title, description, priority) VALUES (?, ?, ?) RETURNING *",
-    )
-    .get(input.title, input.description, input.priority);
-  if (!row) throw new Error("Insert returned no row");
-  return toBacklogItem(row);
+  return toBacklogItem(
+    insert.get(input.title, input.description, input.priority),
+  );
 }
 
 export function updateItem(
   id: number,
   input: BacklogInput,
 ): BacklogItem | null {
-  const row = db
-    .prepare(
-      "UPDATE backlog_items SET title = ?, description = ?, priority = ? WHERE id = ? RETURNING *",
-    )
-    .get(input.title, input.description, input.priority, id);
+  const row = update.get(input.title, input.description, input.priority, id);
   return row ? toBacklogItem(row) : null;
 }
 
 export function deleteItem(id: number): boolean {
-  const result = db.prepare("DELETE FROM backlog_items WHERE id = ?").run(id);
-  return Number(result.changes) > 0;
+  return Number(remove.run(id).changes) > 0;
 }

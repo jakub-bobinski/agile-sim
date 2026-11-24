@@ -1,6 +1,6 @@
-import type { Task } from "./types";
+import type { Priority, Task } from "./types";
 
-export const WONT_DO_PENALTY_WEIGHT: Record<Task["priority"], number> = {
+export const WONT_DO_PENALTY_WEIGHT: Record<Priority, number> = {
   low: 0.5,
   medium: 1,
   high: 3,
