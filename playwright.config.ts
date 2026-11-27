@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const PORT = 5173;
+const PORT = 5174;
 const BASE_URL = `http://localhost:${PORT}`;
 
 export default defineConfig({
@@ -22,8 +22,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev",
+    command: `npm run dev -- --port ${PORT} --strictPort`,
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,
+    env: { DATABASE_PATH: "./data/test.db" },
   },
 });
