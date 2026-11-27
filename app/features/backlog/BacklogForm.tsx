@@ -1,5 +1,6 @@
 import { Form, useNavigation } from "react-router";
 import { PRIORITIES } from "~/features/board/types";
+import { useHydrated } from "~/lib/use-hydrated";
 import type { BacklogInput } from "./types";
 import { DESCRIPTION_MAX, TITLE_MAX, type FieldErrors } from "./validation";
 
@@ -32,6 +33,7 @@ export function BacklogForm({
 }: BacklogFormProps) {
   const navigation = useNavigation();
   const isSaving = navigation.formMethod === "POST";
+  const isHydrated = useHydrated();
 
   return (
     <Form method="post" noValidate className="flex flex-col gap-4">
@@ -109,7 +111,7 @@ export function BacklogForm({
 
       <button
         type="submit"
-        disabled={isSaving}
+        disabled={isSaving || !isHydrated}
         className="self-start rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-wait disabled:bg-blue-400"
       >
         {isSaving ? "Saving…" : submitLabel}

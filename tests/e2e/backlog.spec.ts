@@ -4,7 +4,6 @@ test("user can create a backlog item with the form", async ({ page }) => {
   const title = `E2E created ${Date.now()}`;
 
   await page.goto("/backlog");
-  await page.waitForLoadState("networkidle");
 
   await page.getByRole("link", { name: "New item" }).click();
   await expect(
@@ -22,7 +21,6 @@ test("user can create a backlog item with the form", async ({ page }) => {
 
 test("form shows validation errors for empty fields", async ({ page }) => {
   await page.goto("/backlog/new");
-  await page.waitForLoadState("networkidle");
 
   await page.getByRole("button", { name: "Create item" }).click();
 
@@ -49,7 +47,6 @@ test("user can edit a backlog item", async ({ page, request }) => {
   const newTitle = `E2E edited ${Date.now()}`;
 
   await page.goto(`/backlog/${id}`);
-  await page.waitForLoadState("networkidle");
 
   await page.getByLabel("Title").fill(newTitle);
   await page.getByRole("button", { name: "Save changes" }).click();
@@ -66,7 +63,6 @@ test("user can delete a backlog item", async ({ page, request }) => {
   const { id } = await created.json();
 
   await page.goto(`/backlog/${id}`);
-  await page.waitForLoadState("networkidle");
 
   page.once("dialog", (dialog) => dialog.accept());
   await page.getByRole("button", { name: "Delete item" }).click();
@@ -86,7 +82,6 @@ test("user can filter the backlog by priority", async ({ page, request }) => {
   });
 
   await page.goto("/backlog");
-  await page.waitForLoadState("networkidle");
 
   await expect(page.getByText(lowTitle)).toBeVisible();
 
@@ -99,7 +94,6 @@ test("user can filter the backlog by priority", async ({ page, request }) => {
 
 test("unknown backlog item shows an error page", async ({ page }) => {
   await page.goto("/backlog/999999");
-  await page.waitForLoadState("networkidle");
 
   await expect(page.getByRole("alert")).toBeVisible();
   await expect(
