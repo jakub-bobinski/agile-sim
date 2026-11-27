@@ -69,6 +69,9 @@ Browser (`tests/e2e`):
 - delete an item (with confirm)
 - filter by priority
 - open an item that doesn't exist → error page
+- API returns 500 on save → "Saving failed" (mocked with `page.route`)
+- API returns 500 on delete → "Deleting failed" (mocked)
+- no network while saving → error page
 
 Tests also run in GitHub Actions.
 
