@@ -4,6 +4,7 @@ import { fetchBacklogItems } from "~/features/backlog/api-client";
 import { BacklogItemCard } from "~/features/backlog/BacklogItemCard";
 import { isPriority } from "~/features/backlog/types";
 import { PRIORITIES } from "~/features/board/types";
+import { useHydrated } from "~/lib/use-hydrated";
 
 export function meta() {
   return [{ title: "Backlog · Agile Sim" }];
@@ -21,6 +22,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function BacklogPage({ loaderData }: Route.ComponentProps) {
   const { items, priority } = loaderData;
   const submit = useSubmit();
+  const isHydrated = useHydrated();
 
   return (
     <div className="flex flex-col gap-6">
@@ -57,6 +59,7 @@ export default function BacklogPage({ loaderData }: Route.ComponentProps) {
           id="priority-filter"
           name="priority"
           defaultValue={priority}
+          disabled={!isHydrated}
           className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm"
         >
           <option value="all">all</option>

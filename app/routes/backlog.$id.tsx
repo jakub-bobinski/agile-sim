@@ -4,6 +4,7 @@ import { PriorityBadge } from "~/components/ui/PriorityBadge";
 import { BacklogForm } from "~/features/backlog/BacklogForm";
 import { isBacklogItem } from "~/features/backlog/types";
 import { validateBacklogInput } from "~/features/backlog/validation";
+import { useHydrated } from "~/lib/use-hydrated";
 
 export function meta({ loaderData }: Route.MetaArgs) {
   return [{ title: `${loaderData?.item.title ?? "Backlog item"} Agile Sim` }];
@@ -64,6 +65,7 @@ export default function BacklogItemPage({
   const { item } = loaderData;
   const navigation = useNavigation();
   const isDeleting = navigation.formMethod === "DELETE";
+  const isHydrated = useHydrated();
 
   return (
     <div className="mx-auto flex max-w-xl flex-col gap-4">
@@ -123,7 +125,7 @@ export default function BacklogItemPage({
         >
           <button
             type="submit"
-            disabled={isDeleting}
+            disabled={isDeleting || !isHydrated}
             className="mt-3 rounded-md bg-rose-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-rose-700 focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-wait disabled:bg-rose-400"
           >
             {isDeleting ? "Deleting…" : "Delete item"}
